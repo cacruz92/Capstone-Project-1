@@ -8,7 +8,6 @@
 - I plan on allowing a user to enter the name of a food and the API to provide the caloric total, the protein, the carbohydrates and the fat content. It will also allow a user to enter their caloric and weight goals data, as well as their mood for the day. It will show them data that compares their results to their goals.
 - Possible APIs:
     https://platform.fatsecret.com/
-    Suggestic Food API
 
 4. In brief, outline your approach to creating your project (knowing that you may not know everything in advance and that these details might change later). Answer questions like the ones below, but feel free to add more information: 
     a. What does your database schema look like? 
