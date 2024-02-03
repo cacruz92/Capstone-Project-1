@@ -77,9 +77,9 @@ class User(db.Model):
 
 
 class FoodItem(db.Model):
-    """Meal"""
+    """Food Items"""
 
-    __tablename__ = 'meals'
+    __tablename__ = 'items'
 
     id = db.Column(
         db.Integer, 
@@ -90,6 +90,10 @@ class FoodItem(db.Model):
         db.Integer, 
         db.ForeignKey('meals.id')
         )
+    item_name = db.Column(
+        db.Text,
+        nullable=False
+    )
     serving_size = db.Column(
         db.String(30), 
         nullable=False
