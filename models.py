@@ -1,8 +1,13 @@
 from flask_sqlalchemy import SQLAlchemy
-from flask_bcrypt import flask_bcrypt
+from flask_bcrypt import Bcrypt
 
 bcrypt = Bcrypt()
 db = SQLAlchemy()
+
+def connect_db(app):
+    """Connect the database to the Flask app."""
+    db.app = app
+    db.init_app(app)
 
 """Models for Diet Tracker App"""
 
@@ -54,10 +59,10 @@ class User(db.Model):
 
         user = User(
             first_name = first_name,
-            last_name=last_name
-            email=email
-            password=hashed_pwd
-            daily_calorie_goal=daily_calorie_goal
+            last_name=last_name,
+            email=email,
+            password=hashed_pwd,
+            daily_calorie_goal=daily_calorie_goal,
             goal_weight=goal_weight
         )
 

@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
-from sqlalchemy.exc import InregrityError
+from sqlalchemy.exc import IntegrityError
 
 from forms import UserAddForm
 from models import db, connect_db, User, FoodItem, Meal, DailyLog
@@ -9,7 +9,8 @@ CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
 
-app.config['SQLACLHEMY_DATABASE_URI'] = 'postgresql:///diet-tracker'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///diet_tracker'
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 
