@@ -54,7 +54,7 @@ def root():
     return redirect('/register')
 
 
-@app.route('/register')
+@app.route('/register', methods=["GET", "POST"])
 def add_user():
     """Handles the adding of a user"""
 
@@ -62,11 +62,11 @@ def add_user():
 
     if form.validate_on_submit():
         user = User.signup(
-            first_name = form.first_name.data
-            last_name = form.last_name.data
-            email = form.email.data
-            password = form.password.data
-            daily_calorie_goal = form.daily_calorie_goal.data
+            first_name = form.first_name.data,
+            last_name = form.last_name.data,
+            email = form.email.data,
+            password = form.password.data,
+            daily_calorie_goal = form.daily_calorie_goal.data,
             goal_weight = form.goal_weight.data
             )
         
@@ -77,7 +77,7 @@ def add_user():
         return render_template('user.html')
 
     else:
-        return render_template('users/signup.html')
+        return render_template('users/signup.html', form=form)
 
             
 
