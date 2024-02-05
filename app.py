@@ -17,7 +17,7 @@ app.config['SQLALCHEMY_ECHO'] = True
 connect_db(app)
 
 with app.app_context():
-    db.drop_all()
+    # db.drop_all()
     db.create_all()
 
 app.config['SECRET_KEY'] = "BigBoyDeluxe"
@@ -78,6 +78,26 @@ def add_user():
 
     else:
         return render_template('users/signup.html', form=form)
+    
+@app.route('/login', methods=["GET", "POST"])
+def login_user():
+    """Handles the logging in of a user"""
+
+    form = UserAddForm()
+
+    if form.validate_on_submit():
+        user = User.authenticate(
+            email = form.email.data,
+            password = form.password.data
+            )
+        
+        if user:
+            do_login(user)
+
+        return render_template('users/details.html', user=user)
+
+    else:
+        return render_template('users/login.html', form=form)
 
             
 
