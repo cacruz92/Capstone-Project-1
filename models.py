@@ -30,11 +30,11 @@ class User(db.Model):
         nullable=False
         )
     email = db.Column(
-        db.String(50), 
+        db.Text, 
         nullable=False
         )
     password = db.Column(
-        db.String(50), 
+        db.String(100), 
         nullable=False
         )
     daily_calorie_goal = db.Column(
