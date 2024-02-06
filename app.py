@@ -2,14 +2,16 @@ from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
-from forms import UserAddForm, LoginForm
-from models import db, connect_db, User, FoodItem, Meal, DailyLog
+from forms import UserAddForm, LoginForm, AddFoodForm
+from models import db, connect_db, User, FoodItem, DailyLog
 
 CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///diet_tracker'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///diet_tracker?options=-csearch_path%3Ddiet_tracker'
+
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
@@ -17,7 +19,7 @@ app.config['SQLALCHEMY_ECHO'] = True
 connect_db(app)
 
 with app.app_context():
-    db.drop_all()
+    db.drop_all
     db.create_all()
 
 app.config['SECRET_KEY'] = "BigBoyDeluxe"
@@ -41,7 +43,7 @@ def do_login(user):
 
      session[CURR_USER_KEY] = user.id
 
-def do_logout(user):
+def do_logout():
      """Logs user out."""
 
      if CURR_USER_KEY in session:
@@ -101,18 +103,17 @@ def login_user():
             
             if user:
                 do_login(user)
-                print("User authenticated successfully.")
-                print(f"User ID: {user.id}, Email: {user.email}")
                 return redirect(f'/users/{user.id}')
-            else:
-                print("User authentication failed. Invalid email or password.")
-
         else:
-            print("Form validation failed.")
-            print("Form errors:", form.errors)
+            return render_template('users/login.html', form=form)
+        
+@app.route('/logout')
+def logout():
+    """Handle logout of user"""
 
-        # Render the login form template
-        return render_template('users/login.html', form=form)
+    do_logout()
+    flash("Logged out successfully!", "success")
+    return redirect('/login')
 
     
 @app.route('/users/<int:user_id>')
@@ -120,15 +121,52 @@ def show_user_details(user_id):
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
+    elif g.user.id != user_id:
+        flash("Access unauthorized: You can only view your own profile.", "danger")
+        return redirect("/")
     else:
-        user = User.query.get_or_404(user_id)
-        if g.user.id == user.id:
-            return render_template('users/details.html', user=user)
-        else:
-            flash("Access unauthorized.", "danger")
-            return redirect("/")  
+        return render_template('users/details.html', user=g.user)
 
-            
+        
+
+##############################################################################
+# Adding Food Routes
+##############################################################################
+
+@app.route('/users/<int:user_id>/add_food', methods=['GET', 'POST'])
+def AddFood(user_id):
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    elif g.user.id != user_id:
+        flash("Access unauthorized: You can only view your own profile.", "danger")
+        return redirect("/")
+    else:
+        form = AddFoodForm()
+        user = User.query.get_or_404(user_id)
+
+        if form.validate_on_submit():
+            date_str = form.date.data.strftime('%Y-%m-%d')
+
+            new_item = FoodItem(
+                user_id = user_id,
+                meal_type = form.meal_type.data,
+                date = date_str,
+                item_name = form.item_name.data,
+                serving_size = form.serving_size.data,
+                calorie_total = form.calorie_total.data,
+                protein = form.protein.data,
+                fat = form.fat.data,
+                carb = form.carb.data
+            )
+
+            db.session.add(new_item)
+            db.session.commit()
+
+            return redirect(f'/users/{user_id}')
+        else:
+            return render_template('/users/addfood.html', form=form, user=user)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

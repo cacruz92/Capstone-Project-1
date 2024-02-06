@@ -1,6 +1,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="col-md-4 text-right">
+    <form action="/logout">
+        <button class="btn btn-primary">Logout</button>
+    </form>
+</div>
+
+
 <div class="col-md-8">
     <p> <b> Name:</b> {{user.first_name}} {{user.last_name}} </p> 
     <p> <b> Email:</b> {{user.email}}  </p>
@@ -8,8 +15,17 @@
     <p> <b> Goal Weight:</b> {{user.goal_weight}}</p>
 </div>
 
-<form action="/add-food">
+<form action="/users/{{user.id}}/add_food">
     <button>Add Food</button>
 </form>
+
+<div class="col-md-8">
+    <h2>Food Entries</h2>
+    <ul>
+        {% for item in user.food_items %}
+        <li>{{item.item_name}} - {{item.meal_type}} - {{item.calorie_total}} calories</li>
+        {% endfor %}
+    </ul>
+</div>
 
 {% endblock %}

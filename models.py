@@ -46,6 +46,8 @@ class User(db.Model):
         nullable=True
         )
     
+    food_items = db.relationship('FoodItem', backref='user')
+    
     def __repr__(self):
         return f"<User #{self.id}: {self.first_name} {self.last_name}, {self.email}>"
     
