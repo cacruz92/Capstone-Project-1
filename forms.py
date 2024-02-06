@@ -13,7 +13,8 @@ class UserAddForm(FlaskForm):
     goal_weight = IntegerField('Goal Weight')
 
 
-class FoodItemAddForm(FlaskForm):
+class LoginForm(FlaskForm):
     """Form for adding Food Items."""
 
-    
+    email = StringField('Email', validators=[DataRequired(), Email(), Length(min=1, max=100)])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6, max=100)])

@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
-from forms import UserAddForm
+from forms import UserAddForm, LoginForm
 from models import db, connect_db, User, FoodItem, Meal, DailyLog
 
 CURR_USER_KEY = "curr_user"
@@ -74,7 +74,7 @@ def add_user():
         
         do_login(user)
 
-        return render_template('users/details.html', user=user)
+        return redirect(f'/users/{user.id}')
 
     else:
         return render_template('users/signup.html', form=form)
@@ -83,7 +83,7 @@ def add_user():
 def login_user():
     """Handles the logging in of a user"""
 
-    form = UserAddForm()
+    form = LoginForm()
 
     if form.validate_on_submit():
         user = User.authenticate(
@@ -93,11 +93,25 @@ def login_user():
         
         if user:
             do_login(user)
-
-        return render_template('users/details.html', user=user)
+            print("User authenticated successfully.")
+            print(f"User ID: {user.id}, Email: {user.email}")
+            return redirect(f'/users/{user.id}')
+        else:
+            print("User authentication failed. Invalid email or password.")
 
     else:
-        return render_template('users/login.html', form=form)
+        print("Form validation failed.")
+        print("Form errors:", form.errors)
+
+    # Render the login form template
+    return render_template('users/login.html', form=form)
+
+    
+@app.route('/users/<int:user_id>')
+def show_user_details(user_id):
+    user = User.query.get_or_404(user_id)
+
+    return render_template('users/details.html', user=user)
 
             
 

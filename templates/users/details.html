@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-<p> <b> Name:</b> {{user.first_name}} {{user.last_name}} </p> 
-<p> <b> Email:</b> {{user.email}}  </p>
-<p> <b> Daily Calorie Goal:</b> {{user.daily_calorie_goal}} </p>
-<p> <b> Goal Weight:</b> {{user.goal_weight}}</p>
-
+<div class="col-md-8">
+    <p> <b> Name:</b> {{user.first_name}} {{user.last_name}} </p> 
+    <p> <b> Email:</b> {{user.email}}  </p>
+    <p> <b> Daily Calorie Goal:</b> {{user.daily_calorie_goal}} </p>
+    <p> <b> Goal Weight:</b> {{user.goal_weight}}</p>
+</div>
 
 {% endblock %}
