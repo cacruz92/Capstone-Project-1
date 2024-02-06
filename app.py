@@ -58,57 +58,68 @@ def root():
 def add_user():
     """Handles the adding of a user"""
 
-    form = UserAddForm()
-
-    if form.validate_on_submit():
-        user = User.signup(
-            first_name = form.first_name.data,
-            last_name = form.last_name.data,
-            email = form.email.data,
-            password = form.password.data,
-            daily_calorie_goal = form.daily_calorie_goal.data,
-            goal_weight = form.goal_weight.data
-            )
-        
-        db.session.commit()
-        
-        do_login(user)
-
-        return redirect(f'/users/{user.id}')
-
+    if g.user:
+        return redirect (f'/users/{g.user.id}')
+    
     else:
-        return render_template('users/signup.html', form=form)
+        form = UserAddForm()
+
+        if form.validate_on_submit():
+            user = User.signup(
+                first_name = form.first_name.data,
+                last_name = form.last_name.data,
+                email = form.email.data,
+                password = form.password.data,
+                daily_calorie_goal = form.daily_calorie_goal.data,
+                goal_weight = form.goal_weight.data
+                )
+            
+            db.session.commit()
+            
+            do_login(user)
+
+            return redirect(f'/users/{user.id}')
+
+        else:
+            return render_template('users/signup.html', form=form)
     
 @app.route('/login', methods=["GET", "POST"])
 def login_user():
     """Handles the logging in of a user"""
 
-    form = LoginForm()
-
-    if form.validate_on_submit():
-        user = User.authenticate(
-            email = form.email.data,
-            password = form.password.data
-            )
-        
-        if user:
-            do_login(user)
-            print("User authenticated successfully.")
-            print(f"User ID: {user.id}, Email: {user.email}")
-            return redirect(f'/users/{user.id}')
-        else:
-            print("User authentication failed. Invalid email or password.")
-
+    if g.user:
+        return redirect (f'/users/{g.user.id}')
+    
     else:
-        print("Form validation failed.")
-        print("Form errors:", form.errors)
+        form = LoginForm()
 
-    # Render the login form template
-    return render_template('users/login.html', form=form)
+        if form.validate_on_submit():
+            user = User.authenticate(
+                email = form.email.data,
+                password = form.password.data
+                )
+            
+            if user:
+                do_login(user)
+                print("User authenticated successfully.")
+                print(f"User ID: {user.id}, Email: {user.email}")
+                return redirect(f'/users/{user.id}')
+            else:
+                print("User authentication failed. Invalid email or password.")
+
+        else:
+            print("Form validation failed.")
+            print("Form errors:", form.errors)
+
+        # Render the login form template
+        return render_template('users/login.html', form=form)
 
     
 @app.route('/users/<int:user_id>')
 def show_user_details(user_id):
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
     user = User.query.get_or_404(user_id)
 
     return render_template('users/details.html', user=user)
