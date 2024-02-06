@@ -120,9 +120,13 @@ def show_user_details(user_id):
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
-    user = User.query.get_or_404(user_id)
-
-    return render_template('users/details.html', user=user)
+    else:
+        user = User.query.get_or_404(user_id)
+        if g.user.id == user.id:
+            return render_template('users/details.html', user=user)
+        else:
+            flash("Access unauthorized.", "danger")
+            return redirect("/")  
 
             
 
