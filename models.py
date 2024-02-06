@@ -92,70 +92,87 @@ class FoodItem(db.Model):
         primary_key=True, 
         autoincrement=True
         )
-    meal_id = db.Column(
-        db.Integer, 
-        db.ForeignKey('meals.id')
-        )
-    item_name = db.Column(
-        db.Text,
-        nullable=False
-    )
-    serving_size = db.Column(
-        db.String(30), 
-        nullable=False
-        )
-    calorie_total = db.Column(
-        db.Integer, 
-        nullable=False
-        )
-    protein = db.Column(
-        db.Integer, 
-        nullable=True
-        )
-    fat = db.Column(
-        db.Integer, 
-        nullable=True
-        )
-    carb = db.Column(
-        db.Integer, 
-        nullable=True
-        )
-
-
-class Meal(db.Model):
-    """Meal"""
-
-    __tablename__ = 'meals'
-
-    id = db.Column(
-        db.Integer, 
-        primary_key=True, 
-        autoincrement=True
-        )
+    
     user_id = db.Column(
         db.Integer, 
         db.ForeignKey('users.id')
         )
+    
+    meal_type = db.Column(
+        db.Text,
+        nullable=False
+    )
+    
     date = db.Column(
         db.Date, 
         nullable=False
         )
+    
+    item_name = db.Column(
+        db.Text,
+        nullable=False
+    )
+    
+    serving_size = db.Column(
+        db.String(30), 
+        nullable=False
+        )
+    
     calorie_total = db.Column(
         db.Integer, 
         nullable=False
         )
+    
     protein = db.Column(
         db.Integer, 
         nullable=True
         )
+   
     fat = db.Column(
         db.Integer, 
         nullable=True
         )
+    
     carb = db.Column(
         db.Integer, 
         nullable=True
         )
+
+
+# class Meal(db.Model):
+#     """Meal"""
+
+#     __tablename__ = 'meals'
+
+#     id = db.Column(
+#         db.Integer, 
+#         primary_key=True, 
+#         autoincrement=True
+#         )
+#     user_id = db.Column(
+#         db.Integer, 
+#         db.ForeignKey('users.id')
+#         )
+#     date = db.Column(
+#         db.Date, 
+#         nullable=False
+#         )
+#     calorie_total = db.Column(
+#         db.Integer, 
+#         nullable=False
+#         )
+#     protein = db.Column(
+#         db.Integer, 
+#         nullable=True
+#         )
+#     fat = db.Column(
+#         db.Integer, 
+#         nullable=True
+#         )
+#     carb = db.Column(
+#         db.Integer, 
+#         nullable=True
+#         )
 
 
 class DailyLog(db.Model):

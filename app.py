@@ -17,7 +17,7 @@ app.config['SQLALCHEMY_ECHO'] = True
 connect_db(app)
 
 with app.app_context():
-    # db.drop_all()
+    db.drop_all()
     db.create_all()
 
 app.config['SECRET_KEY'] = "BigBoyDeluxe"
