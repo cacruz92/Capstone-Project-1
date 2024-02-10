@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="row justify-content-md-center">
+    <ul>
+    {% for food in foods %}
+    <li>{{food.food_id}} - {{food.food_name}} - {{food.food_description}}</li>
+    {% endfor %}
+    </ul>
+</div>
+
+{% endblock %}

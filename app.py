@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
+import requests
 
 from forms import UserAddForm, LoginForm, AddFoodForm
 from models import db, connect_db, User, FoodItem, DailyLog
@@ -26,6 +27,9 @@ app.config['SECRET_KEY'] = "BigBoyDeluxe"
 
 debug = DebugToolbarExtension(app)
 
+API_KEY = 'e2c186a8b8474f8cae53908a06bdf81a';
+API_SECRET = '73333179439f46d9a7deb5f5f5a83a09';
+
 ##############################################################################
 # User signup/login/logout
 ##############################################################################
@@ -34,7 +38,10 @@ debug = DebugToolbarExtension(app)
 def add_user_to_g():
     """If we're logged in, add curr user to Flask global"""
     if CURR_USER_KEY in session:
-        g.user = User.query.get(session[CURR_USER_KEY])
+        # g.user = User.query.get(session[CURR_USER_KEY])
+        g.user = db.session.query(User).get(session[CURR_USER_KEY])
+
+
     else:
          g.user = None
 
@@ -134,7 +141,14 @@ def show_user_details(user_id):
 ##############################################################################
 
 @app.route('/users/<int:user_id>/add_food', methods=['GET', 'POST'])
+def choose_how_to_add(user_id):
+    user = User.query.get_or_404(user_id)
+    return render_template('/food/choose.html',user=user)
+
+
+@app.route('/users/<int:user_id>/add_food_manually', methods=['GET', 'POST'])
 def AddFood(user_id):
+    """Manually add a food item"""
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
@@ -165,7 +179,105 @@ def AddFood(user_id):
 
             return redirect(f'/users/{user_id}')
         else:
-            return render_template('/users/addfood.html', form=form, user=user)
+            return render_template('/food/addfood.html', form=form, user=user)
+        
+@app.route('/users/<int:user_id>/food_search')
+def show_search_form(user_id):
+    user = User.query.get_or_404(user_id)
+    return render_template('food/search.html', user=user)
+
+@app.route('/users/<int:user_id>/results')
+def search_food(user_id):
+    user = User.query.get_or_404(user_id)
+    """Searches for food item using API"""
+    print("**********************************************Entered search_food function")
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        print("**************************************Access unauthorized. Redirecting to /")
+        return redirect("/")
+
+    query = request.args.get('foodSearch')
+
+    if not query:
+        flash("please provide a search query", "danger")
+        print("******************************No query provided. Redirecting to food_search page")
+        return redirect(f'/users/{user_id}/food_search')
+
+    url = 'http://platform.fatsecret.com/rest/server.api'
+
+    params = {
+        'method': 'foods.search',
+        'format': 'json',
+        'oauth_consumer_key': 'e2c186a8b8474f8cae53908a06bdf81a',  
+        'oauth_signature_method': 'HMAC-SHA1',
+        'oauth_version': '1.0',
+        'search_expression': query
+    }
+
+    try:
+        print("Making request to the API with params:", params)
+        response = requests.get(url, params=params)
+        response.raise_for_status()  # This line raises an HTTPError if the response status code indicates an error.
+        data = response.json()
+
+        if 'foods' in data:
+            foods = data['foods']['food']
+            print("Received food items:", foods)
+            return render_template('food/search_results.html', foods=foods)
+        else:
+            flash('No food items found by your search query.', "warning")
+            print("No food items found. Rendering search.html template")
+            return render_template('food/search.html', user=user)
+
+    except requests.RequestException as e:
+        flash(f'Error occurred: {str(e)}', 'danger')
+        print("Request failed with error:", e)
+        print("Rendering search.html template")
+        return render_template('/food/search.html', user=user)
+
+
+
+
+# @app.route('/users/<int:user_id>/results')
+# def search_food(user_id):
+#     user = User.query.get_or_404(user_id)
+#     """Searches for food item using API"""
+#     if not g.user:
+#         flash("Access unauthorized.", "danger")
+#         return redirect("/")
+    
+#     query = request.args.get('foodSearch')
+
+#     if not query:
+#         flash("please provide a search query", "danger")
+#         return redirect(f'/users/{user_id}/food_search')
+    
+#     url = 'http://platform.fatsecret.com/rest/server.api'
+
+#     params = {
+#         'method': 'foods.search',
+#         'format': 'json',
+#         'oauth_consumer_key': 'API_KEY',
+#         'oauth_signature_method': 'HMAC-SHA1',
+#         'oauth_version': '1.0',
+#         'search_expression': query
+#     }
+
+#     try:
+#         response = requests.get(url, params=params)
+#         response.raise_for_status()  # This line raises an HTTPError if the response status code indicates an error.
+#         data = response.json()
+
+#         if 'foods' in data:
+#             foods = data['foods']['food']
+#             return render_template('food/search_results.html', foods=foods)
+#         else:
+#             flash('No food items found by your search query.', "warning")
+#             return render_template('food/search.html', user=user)
+        
+#     except requests.RequestException as e:
+#         flash(f'Error occurred: {str(e)}','danger')
+#         return render_template('/food/search.html', user=user)
 
 
 if __name__ == '__main__':

@@ -26,7 +26,7 @@ class AddFoodForm(FlaskForm):
         ('Breakfast', 'Breakfast'),
         ('Lunch', 'Lunch'),
         ('Dinner', 'Dinner'),
-        ('Snack', 'Snack'),
+        ('Other', 'Other'),
     ]
 
     units_of_measurement = [
