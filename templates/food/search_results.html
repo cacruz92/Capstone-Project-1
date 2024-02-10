@@ -4,8 +4,17 @@
 
 <div class="row justify-content-md-center">
     <ul>
-    {% for food in foods %}
-    <li>{{food.food_id}} - {{food.food_name}} - {{food.food_description}}</li>
+        {% for food in foods %}
+        <li>{{food.description}}
+            <ul>
+                <li>Brand: {{ food.brandName }}</li>
+                <li>Serving Size: {{ food.servingSize}} {{food.servingSizeUnit}}</li>
+                <li>Calories: {{ food.foodNutrients | selectattr('nutrientName', 'equalto', 'Energy') | map(attribute='value') | first }}</li>
+                <li>Protein: {{ food.foodNutrients | selectattr('nutrientName', 'equalto', 'Protein') | map(attribute='value') | first }}g</li>
+                <li>Fat: {{ food.foodNutrients | selectattr('nutrientName', 'equalto', 'Total lipid (fat)') | map(attribute='value') | first }}g</li>
+                <li>Carbohydrates: {{ food.foodNutrients | selectattr('nutrientName', 'equalto', 'Carbohydrate, by difference') | map(attribute='value') | first }}g</li>
+            </ul>
+        </li>
     {% endfor %}
     </ul>
 </div>

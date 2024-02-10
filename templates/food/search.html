@@ -5,10 +5,10 @@
     <div class="col-md-7 col-lg-5">
         <h2 class="join-message">Food Search:</h2>
 
-        <form action="/users/{{user.id}}/results" id="apiForm">
+        <form action="{{ url_for('search_food', user_id=user.id) }}" method="GET">
             <label for="foodSearch"> Search:</label>
             <input type="text" name="foodSearch" id="searchQuery" class="form-control" placeholder="Enter food name">
-            <button>Search</button>
+            <button type="submit">Search</button>
         </form>
     </div>
 </div>
