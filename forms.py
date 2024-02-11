@@ -29,19 +29,12 @@ class AddFoodForm(FlaskForm):
         ('Other', 'Other'),
     ]
 
-    units_of_measurement = [
-        ('grams', 'grams'),
-        ('ounces','ounces'),
-        ('tbsp', 'tablespoons'),
-        ('tsp', 'teaspoons'),
-        ('lbs', 'pounds')
-    ]
 
     meal_type = SelectField('Meal Type', choices=meal_choices )
     date = DateField('Date', default=date.today)
     item_name = StringField('Food Item Name', validators=[DataRequired(), Length(min=1, max=100)])
     serving_size = IntegerField('Serving Size', validators=[DataRequired()])
-    serving_measurement = SelectField('Unit of Measurement', choices = units_of_measurement)
+    serving_measurement = StringField('Unit of Measurement')
     calorie_total = IntegerField('Calories', validators=[DataRequired()])
     protein = IntegerField('Protein (g)')
     fat = IntegerField('Fat (g)')

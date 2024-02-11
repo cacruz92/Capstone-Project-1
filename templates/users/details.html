@@ -24,6 +24,7 @@
     <ul>
         {% for item in user.food_items %}
         <li>{{item.item_name}} - {{item.meal_type}} - {{item.calorie_total}} calories</li>
+        <a href="/{{user.id}}/{{item.id}}/delete"><i class="fa-solid fa-trash"></i></a>
         {% endfor %}
     </ul>
 </div>

@@ -141,42 +141,6 @@ class FoodItem(db.Model):
         )
 
 
-# class Meal(db.Model):
-#     """Meal"""
-
-#     __tablename__ = 'meals'
-
-#     id = db.Column(
-#         db.Integer, 
-#         primary_key=True, 
-#         autoincrement=True
-#         )
-#     user_id = db.Column(
-#         db.Integer, 
-#         db.ForeignKey('users.id')
-#         )
-#     date = db.Column(
-#         db.Date, 
-#         nullable=False
-#         )
-#     calorie_total = db.Column(
-#         db.Integer, 
-#         nullable=False
-#         )
-#     protein = db.Column(
-#         db.Integer, 
-#         nullable=True
-#         )
-#     fat = db.Column(
-#         db.Integer, 
-#         nullable=True
-#         )
-#     carb = db.Column(
-#         db.Integer, 
-#         nullable=True
-#         )
-
-
 class DailyLog(db.Model):
     """Daily Log"""
 

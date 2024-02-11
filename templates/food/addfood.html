@@ -4,19 +4,35 @@
 <div class="row justify-content-md-center">
     <div class="col-md-7 col-lg-5">
         <h2 class="join-message">Food Entry:</h2>
-        <form action="/users/{{user.id}}/add_food" method="POST">
+        
+        <form id="add-food-form" action="/users/{{user.id}}/add_food" method="POST">
+
             {{ form.hidden_tag() }}
 
             {% for field in form if field.widget.input_type != 'hidden' %}
+            <div class="form-group">
+                {% if field.name == 'item_name' %}
+                <div class="form-group">
+                    <input type="text" name="item_name" id="item_name" class="form-control" placeholder="Food Name">
+                    <select id="food-dropdown" class="form-control" style="display: none;">
+]
+                    </select>
+                </div>
 
-                {% for error in field.errors %}
-                <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-                {{ field(placeholder=field.label.text, class="form-control") }}
+                {% else %}
+                    {% for error in field.errors %}
+                    <span class="text-danger">{{ error }}</span>
+                    {% endfor %}
+                    {{ field(placeholder=field.label.text, class="form-control", id=field.name) }}
+                
+                {% endif %}
+            </div>
             {% endfor %}
 
             <button class="btn-primary">Add Food</button>
         </form>
     </div>
 </div>
+
+<script src="/static/diettracker.js"></script>
 {% endblock %}
