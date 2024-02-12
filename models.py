@@ -119,6 +119,11 @@ class FoodItem(db.Model):
         db.String(30), 
         nullable=False
         )
+ 
+    serving_measurement = db.Column(
+        db.String(30), 
+        nullable=False
+        )
     
     calorie_total = db.Column(
         db.Integer, 

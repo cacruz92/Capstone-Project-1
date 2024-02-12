@@ -39,4 +39,24 @@ class AddFoodForm(FlaskForm):
     protein = IntegerField('Protein (g)')
     fat = IntegerField('Fat (g)')
     carb = IntegerField('Carbohydrates (g)')
+
+class EditFoodForm(FlaskForm):
+    """Form for editing Food Items."""
+    meal_choices = [
+        ('Breakfast', 'Breakfast'),
+        ('Lunch', 'Lunch'),
+        ('Dinner', 'Dinner'),
+        ('Other', 'Other'),
+    ]
+
+
+    meal_type = SelectField('Meal Type', choices=meal_choices )
+    date = DateField('Date', default=date.today)
+    item_name = StringField('Food Item Name', validators=[DataRequired(), Length(min=1, max=100)])
+    serving_size = IntegerField('Serving Size', validators=[DataRequired()])
+    serving_measurement = StringField('Unit of Measurement')
+    calorie_total = IntegerField('Calories', validators=[DataRequired()])
+    protein = IntegerField('Protein (g)')
+    fat = IntegerField('Fat (g)')
+    carb = IntegerField('Carbohydrates (g)')
     

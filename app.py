@@ -5,7 +5,7 @@ from datetime import date
 
 
 
-from forms import UserAddForm, LoginForm, AddFoodForm
+from forms import UserAddForm, LoginForm, AddFoodForm, EditFoodForm
 from models import db, connect_db, User, FoodItem, DailyLog
 
 CURR_USER_KEY = "curr_user"
@@ -141,14 +141,14 @@ def show_user_details(user_id):
         
 
 ##############################################################################
-# Adding Food Routes
+# Adding/Editing/Deleting Food Routes
 ##############################################################################
 
 
 
 @app.route('/users/<int:user_id>/add_food', methods=['GET', 'POST'])
 def AddFood(user_id):
-    """Manually add a food item"""
+    """ add a food item"""
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
@@ -158,16 +158,6 @@ def AddFood(user_id):
     else:
         form = AddFoodForm()
         user = User.query.get_or_404(user_id)
-
-
-
-        item_name = request.args.get('item_name')
-        serving_size = request.args.get('serving_size')
-        serving_measurement = request.args.get('serving_measurement')
-        calorie_total = request.args.get('calorie_total')
-        protein = request.args.get('protein')
-        fat = request.args.get('fat')
-        carb = request.args.get('carb')
 
         if form.validate_on_submit():
 
@@ -179,6 +169,7 @@ def AddFood(user_id):
                 date=date_str,
                 item_name=form.item_name.data,
                 serving_size=form.serving_size.data,
+                serving_measurement=form.serving_measurement.data,
                 calorie_total=form.calorie_total.data,
                 protein=form.protein.data,
                 fat=form.fat.data,
@@ -191,21 +182,55 @@ def AddFood(user_id):
 
             return redirect(f'/users/{user_id}')
         else:
-            form.item_name.data = item_name
-            form.serving_size.data = serving_size
-            form.serving_measurement.data = serving_measurement
-            form.calorie_total.data = calorie_total
-            form.protein.data = protein
-            form.fat.data = fat
-            form.carb.data = carb
+
 
             return render_template('/food/addfood.html', form=form, user=user)
+        
+@app.route('/<int:user_id>/<int:item_id>/edit', methods=['GET', 'POST'])
+def EditFoodItem(user_id, item_id):
+    if not g.user:
+        flash("Access unauthorized", "danger")
+
+    elif g.user.id != user_id:
+        flash("Access unauthorized: You can only view your own profile.", "danger")
+        return redirect("/")
+    else:
+        form = EditFoodForm()
+        user = User.query.get_or_404(user_id)
+        item = FoodItem.query.get_or_404(item_id)
+
+        if form.validate_on_submit():
+            
+            date_str = form.date.data.strftime('%Y-%m-%d')
+            
+            item.meal_type=form.meal_type.data,
+            item.date=date_str,
+            item.item_name=form.item_name.data,
+            item.serving_size=form.serving_size.data,
+            item.serving_measurement=form.serving_measurement.data,
+            item.calorie_total=form.calorie_total.data,
+            item.protein=form.protein.data,
+            item.fat=form.fat.data,
+            item.carb=form.carb.data
+
+            db.session.commit()
+            
+            return redirect('/')
+        else:
+            form.meal_type.data = item.meal_type
+            form.date.data = item.date
+            form.item_name.data = item.item_name
+            form.serving_size.data = item.serving_size
+            form.serving_measurement = item.serving_measurement
+            form.calorie_total.data = item.calorie_total
+            form.protein.data = item.protein
+            form.fat.data = item.fat
+            form.carb.data = item.carb
+
+            return render_template('/food/editfood.html', form=form, user=user, item=item)
 
 
 
-##############################################################################
-# deleting Food Routes
-##############################################################################
 @app.route('/<int:user_id>/<int:item_id>/delete')
 def delete_food_item(user_id, item_id):
     deleted_item = FoodItem.query.get_or_404(item_id)

@@ -28,7 +28,7 @@ function clearFormFields() {
 
 function searchFood(query) {
     const apiKey = '2A3ZTZdTx5O5y605VbLnIxJoNnDB9BJhmnGxM0hy';
-    const apiUrl = `https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${apiKey}&query=${encodeURIComponent(query)}&pageSize=10`;
+    const apiUrl = `https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${apiKey}&query=${encodeURIComponent(query)}&pageSize=100`;
 
     fetch(apiUrl)
         .then(response => {

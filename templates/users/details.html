@@ -1,11 +1,6 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="col-md-4 text-right">
-    <form action="/logout">
-        <button class="btn btn-primary">Logout</button>
-    </form>
-</div>
 
 <div class="col-md-8">
     <p><b>Name:</b> {{ user.first_name }} {{ user.last_name }}</p> 
@@ -14,9 +9,7 @@
     <p><b>Goal Weight:</b> {{ user.goal_weight }}</p>
 </div>
 
-<form action="/users/{{ user.id }}/add_food">
-    <button>Add Food</button>
-</form>
+<hr>
 
 <div class="col-md-8">
     <h2>Today's Food Entries</h2>
@@ -33,6 +26,7 @@
                 {% if item.meal_type == meal_type and item.date == today %}
                 {% set overall_total = overall_total + item.calorie_total %}
                     <li>{{ item.item_name }} - {{ item.date }} - {{ item.calorie_total }} calories
+                        <a href="/{{ user.id }}/{{ item.id }}/edit"><i class="fa-solid fa-pen"></i></a>
                         <a href="/{{ user.id }}/{{ item.id }}/delete"><i class="fa-solid fa-trash"></i></a>
                     </li>
                     {% set _ = meal_totals.update({meal_type: meal_totals[meal_type] + item.calorie_total}) %}
