@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
+from datetime import date
+
 
 
 from forms import UserAddForm, LoginForm, AddFoodForm
@@ -133,7 +135,8 @@ def show_user_details(user_id):
         flash("Access unauthorized: You can only view your own profile.", "danger")
         return redirect("/")
     else:
-        return render_template('users/details.html', user=g.user)
+        today = date.today()
+        return render_template('users/details.html', user=g.user, today=today)
 
         
 
