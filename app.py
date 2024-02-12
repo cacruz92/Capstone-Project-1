@@ -5,7 +5,7 @@ from datetime import date
 
 
 
-from forms import UserAddForm, LoginForm, AddFoodForm, EditFoodForm
+from forms import UserAddForm, LoginForm, AddFoodForm, EditFoodForm, UserEditForm
 from models import db, connect_db, User, FoodItem, DailyLog
 
 CURR_USER_KEY = "curr_user"
@@ -94,6 +94,40 @@ def add_user():
 
         else:
             return render_template('users/signup.html', form=form)
+        
+@app.route('/users/<int:user_id>/edit', methods=['GET', 'POST'])
+def edit_user(user_id):
+    """Handles the edit user form"""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    elif g.user.id != user_id:
+        flash("Access unauthorized: You can only view your own profile.", "danger")
+        return redirect("/")
+    
+    else:
+        user = User.query.get_or_404(user_id)
+        form = UserEditForm(subj=user)
+
+        if form.validate_on_submit():
+                user.first_name = form.first_name.data,
+                user.last_name = form.last_name.data,
+                user.daily_calorie_goal = form.daily_calorie_goal.data,
+                user.goal_weight = form.goal_weight.data
+
+                db.session.commit()
+
+                return redirect('/')
+
+        else:
+            form.first_name.data = user.first_name
+            form.last_name.data = user.last_name
+            form.daily_calorie_goal.data = user.daily_calorie_goal
+            form.goal_weight.data = user.goal_weight
+
+            return render_template('users/edit.html', form=form, user=user)
+
     
 @app.route('/login', methods=["GET", "POST"])
 def login_user():
