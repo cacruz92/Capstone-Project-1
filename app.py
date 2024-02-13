@@ -255,7 +255,7 @@ def EditFoodItem(user_id, item_id):
             form.date.data = item.date
             form.item_name.data = item.item_name
             form.serving_size.data = item.serving_size
-            form.serving_measurement = item.serving_measurement
+            form.serving_measurement.data = item.serving_measurement
             form.calorie_total.data = item.calorie_total
             form.protein.data = item.protein
             form.fat.data = item.fat
