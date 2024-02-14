@@ -10,36 +10,15 @@
 </div>
 
 <hr>
+    <label for="date">Select Date:</label>
+    <input type="date" id="date" name="date"">
 
-<div class="col-md-8">
-    <h2>Today's Food Entries</h2>
-    {% set meal_order = ['Breakfast', 'Lunch', 'Dinner', 'Other'] %}
-    
-    {% set meal_totals = {} %}
-    {% set overall_total = 0 %}
-    
-    {% for meal_type in meal_order %}
-        {% set _ = meal_totals.update({meal_type: meal_totals.get(meal_type, 0)}) %}
-        <h3>{{ meal_type }}</h3>
-        <ul>
-            {% for item in user.food_items %}
-                {% if item.meal_type == meal_type and item.date == today %}
-                {% set overall_total = overall_total + item.calorie_total %}
-                    <li>{{ item.item_name }} - {{ item.date }} - {{ item.calorie_total }} calories
-                        <a href="/{{ user.id }}/{{ item.id }}/edit"><i class="fa-solid fa-pen"></i></a>
-                        <a href="/{{ user.id }}/{{ item.id }}/delete"><i class="fa-solid fa-trash"></i></a>
-                    </li>
-                    {% set _ = meal_totals.update({meal_type: meal_totals[meal_type] + item.calorie_total}) %}
-                {% endif %}
-            {% endfor %}
-        </ul>
-        
-        <h5>Total Calories for {{ meal_type }}: {{ meal_totals[meal_type] }}</h5>
-    {% endfor %}
-<h3>Overall Total</h3>
-        <li>Total Calories: {{ overall_total }}</li>
-    </ul>
+<div id="food-items-container">
 </div>
 
+<script src="/static/calculatetotals.js"></script>
 
-    {% endblock %}
+{% endblock %}
+
+
+

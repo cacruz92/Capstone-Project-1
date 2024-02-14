@@ -77,43 +77,40 @@ async function autofillForm(selectedOption) {
     const itemNameInput = document.getElementById('item_name');
     itemNameInput.value = selectedOption;
 
-
     const fdcId = selectedOption.split(' ').pop(); 
 
     try {
-
         const data = await fetchFoodDetails(fdcId);
         console.log('Fetched food details:', data);
 
-        console.log('Serving size:', data.servingSize);
-        console.log('Serving size unit:', data.servingSizeUnit);
-        console.log('Calories:', data.labelNutrients.calories);
-        console.log('Protein:', data.labelNutrients.protein);
-        console.log('Fat:', data.labelNutrients.fat);
-        console.log('Carbohydrates:', data.labelNutrients.carbohydrates);
+        if (data && data.labelNutrients && data.labelNutrients.calories) {
+            const servingSizeInput = document.getElementById('serving_size');
+            servingSizeInput.value = data.servingSize || '';
 
+            const servingSizeMeasurementInput = document.getElementById('serving_measurement');
+            servingSizeMeasurementInput.value = data.servingSizeUnit || '';
 
-        const servingSizeInput = document.getElementById('serving_size');
-        servingSizeInput.value = parseInt(data.servingSize) || '0';
+            const calorieTotalInput = document.getElementById('calorie_total');
+            calorieTotalInput.value = data.labelNutrients.calories.value || '';
 
-        const servingSizeMeasurementInput = document.getElementById('serving_measurement');
-        servingSizeMeasurementInput.value = data.servingSizeUnit || 'n/a';
+            const proteinInput = document.getElementById('protein');
+            proteinInput.value = data.labelNutrients.protein.value || '';
 
-        const calorieTotalInput = document.getElementById('calorie_total');
-        calorieTotalInput.value = parseInt(data.labelNutrients.calories.value) || '0';
+            const fatInput = document.getElementById('fat');
+            fatInput.value = data.labelNutrients.fat.value || '';
 
-        const proteinInput = document.getElementById('protein');
-        proteinInput.value = parseInt(data.labelNutrients.protein.value) || '0';
-
-        const fatInput = document.getElementById('fat');
-        fatInput.value = parseInt(data.labelNutrients.fat.value) || '0';
-
-        const carbInput = document.getElementById('carb');
-        carbInput.value = parseInt(data.labelNutrients.carbohydrates.value) || '0';
+            const carbInput = document.getElementById('carb');
+            carbInput.value = data.labelNutrients.carbohydrates.value || '';
+        } else {
+            console.error('Missing or invalid data received:', data);
+            clearFormFields();
+        }
     } catch (error) {
         console.error('Error fetching food details:', error);
+        clearFormFields();
     }
 }
+
 
 
 

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, flash, redirect, session, g
+from flask import Flask, render_template, request, flash, redirect, session, g, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 from datetime import date
@@ -178,6 +178,12 @@ def show_user_details(user_id):
 # Adding/Editing/Deleting Food Routes
 ##############################################################################
 
+@app.route('/get/food-items')
+def get_food_items():
+    date = request.args.get('date')
+    food_items = FoodItem.query.filter_by(date=date)
+    serialized_food_items = [{'id': item.id, 'meal_type': item.meal_type, 'item_name': item.item_name, 'calorie_total': item.calorie_total} for item in food_items]
+    return jsonify({'foodItems': serialized_food_items, 'user_id': g.user.id if g.user else None})
 
 
 @app.route('/users/<int:user_id>/add_food', methods=['GET', 'POST'])
