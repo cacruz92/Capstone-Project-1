@@ -85,22 +85,22 @@ async function autofillForm(selectedOption) {
 
         if (data && data.labelNutrients && data.labelNutrients.calories) {
             const servingSizeInput = document.getElementById('serving_size');
-            servingSizeInput.value = data.servingSize || '';
+            servingSizeInput.value = data.servingSize || 0;
 
             const servingSizeMeasurementInput = document.getElementById('serving_measurement');
-            servingSizeMeasurementInput.value = data.servingSizeUnit || '';
+            servingSizeMeasurementInput.value = data.servingSizeUnit || 'NA';
 
             const calorieTotalInput = document.getElementById('calorie_total');
-            calorieTotalInput.value = data.labelNutrients.calories.value || '';
+            calorieTotalInput.value = data.labelNutrients.calories.value || 0;
 
             const proteinInput = document.getElementById('protein');
-            proteinInput.value = data.labelNutrients.protein.value || '';
+            proteinInput.value = data.labelNutrients.protein.value || 0;
 
             const fatInput = document.getElementById('fat');
-            fatInput.value = data.labelNutrients.fat.value || '';
+            fatInput.value = data.labelNutrients.fat.value || 0;
 
             const carbInput = document.getElementById('carb');
-            carbInput.value = data.labelNutrients.carbohydrates.value || '';
+            carbInput.value = data.labelNutrients.carbohydrates.value || 0;
         } else {
             console.error('Missing or invalid data received:', data);
             clearFormFields();
