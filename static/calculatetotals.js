@@ -8,10 +8,15 @@ function fetchAndDisplayFoodItems() {
         })
         .then(data => {
             const userId = data.user_id;
-            displayFoodItems(data.foodItems, userId);
+            const dailyCalorieGoal = data.daily_calorie_goal;
+            if (dailyCalorieGoal === undefined) {
+                throw new Error('Daily calorie goal is undefined');
+            }
+            displayFoodItems(data.foodItems, userId, dailyCalorieGoal);
         })
         .catch(error => console.error('Error fetching food items:', error));
 }
+
 
 function createListItem(item, userId) {
     const listItem = document.createElement('li');
@@ -35,7 +40,8 @@ function createListItem(item, userId) {
     return listItem;
 }
 
-function displayFoodItems(foodItems, userId) {
+function displayFoodItems(foodItems, userId, dailyCalorieGoal) {
+    console.log('Daily Calorie Goal:', dailyCalorieGoal);
     const meals = {
         Breakfast: { items: [], totalCalories: 0 },
         Lunch: { items: [], totalCalories: 0 },
@@ -57,6 +63,8 @@ function displayFoodItems(foodItems, userId) {
         }
     });
 
+    console.log('Overall Total Calories:', overallTotal.totalCalories);
+
     const foodItemsContainer = document.getElementById('food-items-container');
     foodItemsContainer.innerHTML = '';
 
@@ -71,7 +79,7 @@ function displayFoodItems(foodItems, userId) {
 
             const itemList = document.createElement('ul');
             meals[mealType].items.forEach(item => {
-                const listItem = createListItem(item, userId); // Pass userId and item to createListItem
+                const listItem = createListItem(item, userId); 
                 itemList.appendChild(listItem);
             });
             mealSection.appendChild(itemList);
@@ -83,6 +91,15 @@ function displayFoodItems(foodItems, userId) {
             foodItemsContainer.appendChild(mealSection);
         }
     });
+    console.log('Overall Total Calories:', overallTotal.totalCalories);
+    console.log('Overall Total Calories:', overallTotal.totalCalories);
+    const remainingCalories = dailyCalorieGoal - overallTotal.totalCalories;
+    console.log('Remaining Calories:', remainingCalories);
+
+    const remainingCaloriesContainer = document.createElement('p');
+    remainingCaloriesContainer.textContent = `Remaining Calories: ${remainingCalories}`;
+    foodItemsContainer.appendChild(remainingCaloriesContainer);
+
     const overallTotalLine = document.createElement('p');
     overallTotalLine.textContent = `Overall Total Calories: ${overallTotal.totalCalories}`;
     foodItemsContainer.appendChild(overallTotalLine);
@@ -105,28 +122,8 @@ document.getElementById('date').addEventListener('input', function(event) {
     })
     .then(data => {
         const userId = data.user_id;
-        displayFoodItems(data.foodItems, userId);
-    })
-    .catch(error => console.error('Error fetching food items:', error));
-});
-document.getElementById('date').addEventListener('DOMContentLoaded', function(event) {
-    event.preventDefault();
-    const selectedDate = document.getElementById('date').value;
-    fetch('/get/food-items?date=' + selectedDate, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        const userId = data.user_id;
-        displayFoodItems(data.foodItems, userId);
+        const dailyCalorieGoal = data.daily_calorie_goal;
+        displayFoodItems(data.foodItems, userId,dailyCalorieGoal);
     })
     .catch(error => console.error('Error fetching food items:', error));
 });

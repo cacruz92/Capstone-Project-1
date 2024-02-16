@@ -175,7 +175,7 @@ def show_user_details(user_id):
         
 
 ##############################################################################
-# Adding/Editing/Deleting Food Routes
+# Food Item Routes
 ##############################################################################
 
 @app.route('/get/food-items')
@@ -183,7 +183,10 @@ def get_food_items():
     date = request.args.get('date')
     food_items = FoodItem.query.filter_by(date=date)
     serialized_food_items = [{'id': item.id, 'meal_type': item.meal_type, 'item_name': item.item_name, 'calorie_total': item.calorie_total} for item in food_items]
-    return jsonify({'foodItems': serialized_food_items, 'user_id': g.user.id if g.user else None})
+    user = g.user
+    daily_calorie_goal = user.daily_calorie_goal if user else None
+
+    return jsonify({'foodItems': serialized_food_items, 'user_id': g.user.id if g.user else None, 'daily_calorie_goal': daily_calorie_goal})
 
 
 @app.route('/users/<int:user_id>/add_food', methods=['GET', 'POST'])
