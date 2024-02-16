@@ -146,42 +146,5 @@ class FoodItem(db.Model):
         )
 
 
-class DailyLog(db.Model):
-    """Daily Log"""
 
-    __tablename__ = 'logs'
-
-    id = db.Column(
-        db.Integer, 
-        primary_key=True, 
-        autoincrement=True
-        )
-    user_id = db.Column(
-        db.Integer, 
-        db.ForeignKey('users.id')
-        )   
-    date = db.Column(
-        db.Date, 
-        nullable=False
-        )
-    calorie_total = db.Column(
-        db.Integer, 
-        nullable=False
-        )
-    protein = db.Column(
-        db.Integer, 
-        nullable=True
-        )
-    fat = db.Column(
-        db.Integer, 
-        nullable=True
-        )
-    carb = db.Column(
-        db.Integer, 
-        nullable=True
-        )
-    daily_weight = db.Column(
-        db.Integer, 
-        nullable=True
-        )
     

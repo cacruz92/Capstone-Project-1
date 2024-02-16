@@ -6,7 +6,7 @@ from datetime import date
 
 
 from forms import UserAddForm, LoginForm, AddFoodForm, EditFoodForm, UserEditForm
-from models import db, connect_db, User, FoodItem, DailyLog
+from models import db, connect_db, User, FoodItem
 
 CURR_USER_KEY = "curr_user"
 
@@ -147,7 +147,10 @@ def login_user():
             
             if user:
                 do_login(user)
+                flash("Logged in successfully!", "success")
                 return redirect(f'/users/{user.id}')
+            else:
+                flash("Invalid credentials","danger")
         else:
             return render_template('users/login.html', form=form)
         
