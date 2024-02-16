@@ -123,7 +123,7 @@ document.getElementById('date').addEventListener('input', function(event) {
     .then(data => {
         const userId = data.user_id;
         const dailyCalorieGoal = data.daily_calorie_goal;
-        displayFoodItems(data.foodItems, userId,dailyCalorieGoal);
+        displayFoodItems(data.foodItems, userId, dailyCalorieGoal);
     })
     .catch(error => console.error('Error fetching food items:', error));
 });
