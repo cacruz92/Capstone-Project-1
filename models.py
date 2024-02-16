@@ -41,10 +41,6 @@ class User(db.Model):
         db.Integer, 
         nullable=False
         )  
-    goal_weight = db.Column(
-        db.Integer, 
-        nullable=True
-        )
     
     food_items = db.relationship('FoodItem', backref='user')
     
@@ -52,7 +48,7 @@ class User(db.Model):
         return f"<User #{self.id}: {self.first_name} {self.last_name}, {self.email}>"
     
     @classmethod
-    def signup(cls, email, password, first_name, last_name, daily_calorie_goal, goal_weight):
+    def signup(cls, email, password, first_name, last_name, daily_calorie_goal):
         """Sign up user
         
         Hashes password and adds to database
@@ -64,8 +60,7 @@ class User(db.Model):
             last_name=last_name,
             email=email,
             password=hashed_pwd,
-            daily_calorie_goal=daily_calorie_goal,
-            goal_weight=goal_weight
+            daily_calorie_goal=daily_calorie_goal
         )
 
         db.session.add(user)

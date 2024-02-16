@@ -82,8 +82,7 @@ def add_user():
                 last_name = form.last_name.data,
                 email = form.email.data,
                 password = form.password.data,
-                daily_calorie_goal = form.daily_calorie_goal.data,
-                goal_weight = form.goal_weight.data
+                daily_calorie_goal = form.daily_calorie_goal.data
                 )
             
             db.session.commit()
@@ -113,8 +112,7 @@ def edit_user(user_id):
         if form.validate_on_submit():
                 user.first_name = form.first_name.data,
                 user.last_name = form.last_name.data,
-                user.daily_calorie_goal = form.daily_calorie_goal.data,
-                user.goal_weight = form.goal_weight.data
+                user.daily_calorie_goal = form.daily_calorie_goal.data
 
                 db.session.commit()
 
@@ -124,7 +122,6 @@ def edit_user(user_id):
             form.first_name.data = user.first_name
             form.last_name.data = user.last_name
             form.daily_calorie_goal.data = user.daily_calorie_goal
-            form.goal_weight.data = user.goal_weight
 
             return render_template('users/edit.html', form=form, user=user)
 
