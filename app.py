@@ -12,8 +12,7 @@ CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://lngzxeen:2696k2K-nG0m_I-GrAoRyayJtEJRqotY@kala.db.elephantsql.com/lngzxeen'
-
+SQLALCHEMY_DATABASE_URI = 'postgresql://lngzxeen:2696k2K-nG0m_I-GrAoRyayJtEJRqotY@kala.db.elephantsql.com/lngzxeen'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
