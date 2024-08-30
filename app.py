@@ -28,6 +28,9 @@ app.config['SECRET_KEY'] = "BigBoyDeluxe"
 
 app.config['DEBUG'] = True
 
+app.config['SECRET_KEY'] = "BigBoyDeluxe"
+app.config['DEBUG'] = True
+app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
 debug = DebugToolbarExtension(app)
 
