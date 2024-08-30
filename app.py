@@ -3,9 +3,12 @@ from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 from datetime import date
 import os
+import logging
 
 from forms import UserAddForm, LoginForm, AddFoodForm, EditFoodForm, UserEditForm
 from models import db, connect_db, User, FoodItem
+
+logging.basicConfig(level=logging.DEBUG)
 
 CURR_USER_KEY = "curr_user"
 
@@ -17,14 +20,14 @@ if database_url.startswith("postgres://"):
 
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_ECHO'] = False
+app.config['SQLALCHEMY_ECHO'] = True
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "BigBoyDeluxe")
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
+app.config['DEBUG'] = True
 
 connect_db(app)
 
-if app.debug:
-    debug = DebugToolbarExtension(app)
+debug = DebugToolbarExtension(app)
 
 API_KEY = os.environ.get('API_KEY', '2A3ZTZdTx5O5y605VbLnIxJoNnDB9BJhmnGxM0hy')
 
@@ -62,13 +65,21 @@ def add_user():
                 daily_calorie_goal=form.daily_calorie_goal.data
             )
             db.session.commit()
-        except IntegrityError:
+            app.logger.info(f"User created: {user.id}")
+            do_login(user)
+            app.logger.info(f"User logged in: {user.id}")
+            return redirect(f'/users/{user.id}')
+        except IntegrityError as e:
+            db.session.rollback()
+            app.logger.error(f"IntegrityError: {str(e)}")
             flash("Email already taken", 'danger')
-            return render_template('users/signup.html', form=form)
-        
-        do_login(user)
-        return redirect(f'/users/{user.id}')
-        
+        except Exception as e:
+            db.session.rollback()
+            app.logger.error(f"Unexpected error: {str(e)}")
+            flash("An unexpected error occurred. Please try again.", 'danger')
+    else:
+        app.logger.info(f"Form validation failed: {form.errors}")
+    
     return render_template('users/signup.html', form=form)
 
 @app.route('/users/<int:user_id>/edit', methods=['GET', 'POST'])
@@ -218,5 +229,13 @@ def delete_food_item(user_id, item_id):
 
     return redirect(f'/users/{user_id}')
 
+@app.route('/test-db')
+def test_db():
+    try:
+        db.session.execute('SELECT 1')
+        return 'Database connection successful'
+    except Exception as e:
+        return f'Database connection failed: {str(e)}'
+
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
