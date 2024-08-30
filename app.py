@@ -51,11 +51,15 @@ def root():
 
 @app.route('/register', methods=["GET", "POST"])
 def add_user():
+    app.logger.debug(f"Request method: {request.method}")
+    app.logger.debug(f"Form data: {request.form}")
+    
     if g.user:
         return redirect(f'/users/{g.user.id}')
     
     form = UserAddForm()
     if form.validate_on_submit():
+        app.logger.info("Form validated successfully")
         try:
             user = User.signup(
                 first_name=form.first_name.data,

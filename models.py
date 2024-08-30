@@ -41,22 +41,22 @@ class User(db.Model):
         db.Integer, 
         nullable=False
         )  
-    
+
     food_items = db.relationship('FoodItem', backref='user')
-    
+
     def __repr__(self):
         return f"<User #{self.id}: {self.first_name} {self.last_name}, {self.email}>"
-    
+
     @classmethod
-    def signup(cls, email, password, first_name, last_name, daily_calorie_goal):
+    def signup(cls, first_name, last_name, email, password, daily_calorie_goal):
         """Sign up user
-        
+
         Hashes password and adds to database
         """
         hashed_pwd = bcrypt.generate_password_hash(password).decode('UTF-8')
 
         user = User(
-            first_name = first_name,
+            first_name=first_name,
             last_name=last_name,
             email=email,
             password=hashed_pwd,
@@ -65,7 +65,7 @@ class User(db.Model):
 
         db.session.add(user)
         return user
-    
+
     @classmethod
     def authenticate(cls, email, password):
         user = cls.query.filter_by(email=email).first()
@@ -74,8 +74,7 @@ class User(db.Model):
             is_auth = bcrypt.check_password_hash(user.password, password)
             if is_auth:
                 return user
-                
-            
+
         return None
 
 
