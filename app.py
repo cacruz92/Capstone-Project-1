@@ -27,6 +27,9 @@ app.config['DEBUG'] = True
 
 connect_db(app)
 
+with app.app_context():
+    db.drop_all()
+    db.create_all()
 debug = DebugToolbarExtension(app)
 
 API_KEY = os.environ.get('API_KEY', '2A3ZTZdTx5O5y605VbLnIxJoNnDB9BJhmnGxM0hy')
