@@ -11,11 +11,14 @@ CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgresql://lngzxeen:2696k2K-nG0m_I-GrAoRyayJtEJRqotY@kala.db.elephantsql.com/lngzxeen')
+database_url = os.environ.get('DATABASE_URL', 'postgresql://lngzxeen:2696k2K-nG0m_I-GrAoRyayJtEJRqotY@kala.db.elephantsql.com/lngzxeen')
+if database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_ECHO'] = True
+app.config['SQLALCHEMY_ECHO'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "BigBoyDeluxe")
-app.config['DEBUG'] = False
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
 connect_db(app)
@@ -25,35 +28,26 @@ if app.debug:
 
 API_KEY = os.environ.get('API_KEY', '2A3ZTZdTx5O5y605VbLnIxJoNnDB9BJhmnGxM0hy')
 
-##############################################################################
-# User signup/login/logout
-##############################################################################
-
 @app.before_request
 def add_user_to_g():
-    """If we're logged in, add curr user to Flask global"""
     if CURR_USER_KEY in session:
-        g.user = db.session.query(User).get(session[CURR_USER_KEY])
+        g.user = User.query.get(session[CURR_USER_KEY])
     else:
         g.user = None
 
 def do_login(user):
-    """Logs user in."""
     session[CURR_USER_KEY] = user.id
 
 def do_logout():
-    """Logs user out."""
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
 
 @app.route('/')
 def root():
-    """Homepage"""
     return redirect('/register')
 
 @app.route('/register', methods=["GET", "POST"])
 def add_user():
-    """Handles the adding of a user"""
     if g.user:
         return redirect(f'/users/{g.user.id}')
     
@@ -69,7 +63,7 @@ def add_user():
             )
             db.session.commit()
         except IntegrityError:
-            flash("Username already taken", 'danger')
+            flash("Email already taken", 'danger')
             return render_template('users/signup.html', form=form)
         
         do_login(user)
@@ -79,7 +73,6 @@ def add_user():
 
 @app.route('/users/<int:user_id>/edit', methods=['GET', 'POST'])
 def edit_user(user_id):
-    """Handles the edit user form"""
     if not g.user or g.user.id != user_id:
         flash("Access unauthorized.", "danger")
         return redirect("/")
@@ -99,7 +92,6 @@ def edit_user(user_id):
 
 @app.route('/login', methods=["GET", "POST"])
 def login_user():
-    """Handles the logging in of a user"""
     if g.user:
         return redirect(f'/users/{g.user.id}')
 
@@ -121,7 +113,6 @@ def login_user():
 
 @app.route('/logout')
 def logout():
-    """Handle logout of user"""
     do_logout()
     flash("Logged out successfully!", "success")
     return redirect('/login')
@@ -135,10 +126,6 @@ def show_user_details(user_id):
     today = date.today()
     return render_template('users/details.html', user=g.user, today=today)
 
-##############################################################################
-# Food Item Routes
-##############################################################################
-
 @app.route('/get/food-items')
 def get_food_items():
     date = request.args.get('date')
@@ -150,7 +137,6 @@ def get_food_items():
 
 @app.route('/users/<int:user_id>/add_food', methods=['GET', 'POST'])
 def AddFood(user_id):
-    """ add a food item"""
     if not g.user or g.user.id != user_id:
         flash("Access unauthorized.", "danger")
         return redirect("/")
@@ -233,4 +219,4 @@ def delete_food_item(user_id, item_id):
     return redirect(f'/users/{user_id}')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
